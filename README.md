@@ -15,7 +15,7 @@ In this lab we'll be writing a collection of Ruby classes for a real estate app 
 * has a total square footage, calculated from all apartments
 * has a total monthly revenue, calculated from all apartment rents
 * has a list of tenants, pulled from the tenant lists of all apartments
-* has a method to retrieve all apartments grouped by `average_credit_score` (bonus: sort the groups by credit score)
+* has a method to retrieve all apartments grouped by `credit_rating` (bonus: sort the groups by credit rating from `excellent` to `bad`)
 
 ### `Apartment`
 * has a number, rent, square footage, number of bedrooms, and number of bathrooms
