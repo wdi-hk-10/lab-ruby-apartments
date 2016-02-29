@@ -9,14 +9,14 @@ class Building
   attr_reader :apartment_list
 
 
-  def initialize
-    @@apartment_list = []
-    @total_square_footage = total_square_footage
-    @total_monthly_revenue = total_monthly_revenue
+  def initialize address
+    @address = address
+    @apartment_list = []
+
   end
 
   def new_apartment
-    @@apartment_list << apartment
+    @apartment_list << apartment
   end
 
   def remove_apartment number
@@ -25,36 +25,108 @@ class Building
 end
 
 class Apartments #create an array
+  attr_reader :number, :rent, :square_footage,
+              :bedrooms, :bathrooms, :tenants
   def initialize number, rent, square_footage, bedrooms, bathrooms
+    @number = number
+    @rent = rent
+    @square_footage = square_footage
+    @bedrooms = bedrooms
+    @bathrooms = bathrooms
+    @tenants = []
   end
+
+  def add_tenant tenant
+    if tenant.credit_rating == :bad
+      raise BadCreditRatingError.new "sorry you're a bad tenant"
+    end
+
+    if NotEnoughBedroomError.new "not enough bedrooms" if @tenants.length == number_of_bedrooms
+
+      @tenants << tenant
+    end
+  end
+
+  #tenant can be an object or a name
+  def remove_tenant tenant
+    if tenant.to_s == tenant #this is matching the tenant, you could also do tenant.class = "String"
+      index = @tenants.index { |t| t.name == tenant}
+      if index.nil?
+        not_found = true
+      else
+        @tenants.delete_at_index
+      end
+    else
+      deleted = @tenants.delete tenant
+      not_found = deleted.nil?
+    end
+
+    raise NoSuchTenantError.new tenant if not_found
+  end
+
+#NEED TO UNDERSTAND THIS
+  def average_credit_score
+    @tenants.inject{ |sum, t| sum + t.credit_score }.to_f / @tenants.size
+  end
+
 end
 
 class Tenant
+  attr_reader :name, :age, :credit_score
   def initialize name, age, credit_score
     @name = name
     @age = age
-    @credit_score = credit_score
+    if credit_score < 0
+      raise CreditScoreError 'Score cannot be negative'
+    elsif credit > 800
+      raise CreditScoreError 'Score cannot be bigger than 800'
+    else
+      @credit_score = credit_score
   end
 
-  def credit_rating
-      if @credit_score >=760
-        puts "excellent"
-      elsif @credit_score >=725
-        puts "great"
-      elsif @credit_score >=660
-        puts "good"
-      elsif @credit_score >=560
-        puts "mediocre"
-      elsif @credit_score <560
-        puts "bad"
+  def credit_rating #use the case switch method
+      case @credit_score
+        when 0..559
+          :bad
+        when 560..659
+          :mediocre
+        when 660..724
+          :good
+        when 725..759
+          :great
+        else
+          :excellent
       end
   end
 end
+
+class CreditScoreError < Exception
+end
+
+class BadCreditRatingError < Exception
+end
+
+class NotEnoughBedroomError < Exception
+end
+
+class NoSuchTenantError < Exception
+end
+
+
+#class is always in camel case
+# variables etc we use snake case
+# to "capture" the error you can type
+# begin
+#   denis = Tenant.new("denis", 25, -19)
+# rescue Exception => e
+# p e
 
 tenant1 = Tenant.new "Bob", 24, 770
 
 tenant1.credit_rating
 
+#check out inject method for the average of tenants
+#each: each_with_object is another method to check out for above as well
 
 # Building
 # has an address
