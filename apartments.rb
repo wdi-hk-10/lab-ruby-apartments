@@ -16,10 +16,26 @@ end
 class ApartmentIsOccupiedError < Exception
 end
 
+def calculate_credit_rating credit_score
+    case credit_score
+    when 0..559
+        :Bad
+    when 560..659
+        :Mediocre
+    when 660..724
+        :Good
+    when 725..759
+        :Great
+    else
+        :Excellent
+    end
+end
+
 class Building
     attr_reader :address
 
-    def initialize apartments
+    def initialize address
+        @address = address
         @apartments = []
         @total_sqr_ft = (apartment.sqr_ft).reduce(:+)
         @total_revenue = (apartment.rent).reduce(:+)
@@ -29,24 +45,20 @@ class Building
         @apartments << apartment
     end
 
+    def apartments
+        @apartments.dup
+    end
+
     def credit_separate apartments
     end
 
-    def remove_apartment apartment
-        if apartment.tenants < 1
-            index = @apartments.index { |a| a.number == number}
-            if index.nil?
-                not_found = true
-            else
-                @apartments.delete_at index
-            end
-        else
-            raise ApartmentIsOccupiedError
-        end
-
-        raise NoSuchApartmentError if not_found
+    def remove_apartment apartment_number, force_removal=false
+        index = @apartments.index { |a| a.number == apartment_number}
+        raise NoSuchApartmentError.new apartment_number if index.nil?
+        apartment = @apartments[index]
+        raise ApartmentIsOccupiedError.new if !force_removal && apartment.has_tenants?
+        @apartment.delete_at(index)
     end
-
 end
 
 class Tenant
@@ -65,18 +77,6 @@ class Tenant
     end
 
     def credit_rating
-        case credit_score
-        when 0..559
-            :Bad
-        when 560..659
-            :Mediocre
-        when 660..724
-            :Good
-        when 725..759
-            :Great
-        else
-            :Excellent
-        end
     end
 end
 
@@ -119,5 +119,24 @@ class Apartment
         end
 
         raise NoSuchTenantError.new tenant if not_found
+    end
+
+    def remove_tenants
+        @tenants.clear # can also replace with an empty array []
+    end
+
+    def average_credit
+        # @tenants.inject(0){|sum,t| sum + t.credit_score}.to_f / tenants.length
+        # @tenants.map{|t| t.credit_score}.reduce(:+).to_f / @tenants.length
+        @tenants.map(&:credit_score).reduce(:+).to_f / tenants.length
+    end
+
+    def credit_rating
+        calculate_credit_rating(average_credit_score)
+
+    end
+
+    def is_vacant?
+        @tenants.present?
     end
 end
