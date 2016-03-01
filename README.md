@@ -1,5 +1,3 @@
-![](https://ga-dash.s3.amazonaws.com/production/assets/logo-9f88ae6c9c3871690e33280fcf557f33.png)
-
 # Ruby Apartments
 
 In this lab we'll be writing a collection of Ruby classes for a real estate app to manage apartments. Use the same approach as you did for the car lot assignment: You are not writing the actual higher-level app itself, but you should have test files that verify the behavior and interactions of your classes.
@@ -38,5 +36,5 @@ In this lab we'll be writing a collection of Ruby classes for a real estate app 
 
 ## Instructions
 - Fork and Clone the repo.
-- You are free to use any number of files to implement the 3 classes. 
+- You are free to use any number of files to implement the 3 classes.
 - When you are done, submit a Pull Request to the project repo.
