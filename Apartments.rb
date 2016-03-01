@@ -19,6 +19,7 @@ class Building
     @apartment_list << apartment
   end
 
+#THIS I NEED TO WORK ON
   def remove_apartment number
     @@apartment_list.remove[number]
 
